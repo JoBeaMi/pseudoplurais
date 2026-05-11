@@ -115,7 +115,8 @@ function rIntro(el){
       '<div class="check-row"><input type="checkbox" id="cb3" value="Perfil de risco linguístico"><label for="cb3">Perfil de risco linguístico</label></div>'+
       '<div class="check-row"><input type="checkbox" id="cb4" value="Perfil linguístico frágil"><label for="cb4">Perfil linguístico frágil</label></div>'+
       '<div class="check-row"><input type="checkbox" id="cb5" value="Perturbação dos sons da fala"><label for="cb5">Perturbação dos sons da fala</label></div>'+
-      '<div class="check-row"><input type="checkbox" id="cb6" value="Outra"><label for="cb6">Outra</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb6" value="Perturbação de leitura e escrita"><label for="cb6">Perturbação de leitura e escrita</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb7" value="Outra"><label for="cb7">Outra</label></div>'+
     '</div></div>'+
     '<div style="height:16px"></div>'+
     '<button class="btn btn-p" onclick="go()">Iniciar 🎙️</button>'+
@@ -257,12 +258,31 @@ function saveA(){
 
 async function autoSend(){
   if(!SHEETS_URL){sMsg("Sheets não configurado","wt");return;}
-  sMsg("A enviar...","wt");
+  sMsg("A enviar dados e áudio...","wt");
   const d=fmtXL(),vals=d.v.split("\t"),keys=d.h.split("\t"),payload={};
   keys.forEach((k,i)=>payload[k]=vals[i]||"");
-  try{await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
+  
+  // Add audio as base64
+  if(S.chunks.length){
+    try{
+      const blob=new Blob(S.chunks,{type:"audio/webm"});
+      const b64=await new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=()=>res(r.result.split(",")[1]);
+        r.onerror=rej;
+        r.readAsDataURL(blob);
+      });
+      const ther=(S.info.th||"x").replace(/\s/g,"").slice(0,8);
+      const ch=(S.info.ch||"x").replace(/\s/g,"_");
+      payload.audio_b64=b64;
+      payload.audio_filename="plural_"+ther+"_"+ch+"_"+S.info.sid+".webm";
+    }catch(e){console.error("Audio encode failed:",e);}
+  }
+  
+  try{
+    await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
     sMsg("✓ Enviado!","ok");
-  }catch(e){sMsg("Erro. Copie manualmente.","er");}
+  }catch(e){sMsg("Erro no envio. Use o botão Áudio para guardar manualmente.","er");}
 }
 
 function sMsg(m,t){const a=document.getElementById("stA");if(a)a.innerHTML='<div class="sm sm-'+t+'">'+m+'</div>';}
