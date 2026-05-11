@@ -15,6 +15,15 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1
 .fg label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:3px}
 .fg input{width:100%;padding:11px;font-size:16px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;-webkit-appearance:none}
 .fg input:focus{outline:none;border-color:#2196F3}
+.fg select{width:100%;padding:11px;font-size:16px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;-webkit-appearance:none}
+.cb-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.cb-group label{display:flex;align-items:center;gap:5px;padding:8px 12px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;font-weight:500;color:#555;cursor:pointer;transition:all 0.15s}
+.cb-group label.active{border-color:#2196F3;background:#E3F2FD;color:#1565C0}
+.cb-group input{display:none}
+.sex-toggle{display:flex;gap:8px;margin-top:4px}
+.sex-toggle label{flex:1;text-align:center;padding:10px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.sex-toggle label.active{border-color:#2196F3;background:#E3F2FD;color:#1565C0}
+.sex-toggle input{display:none}
 .btn{width:100%;max-width:360px;padding:15px;font-size:17px;font-weight:600;border:none;border-radius:12px;cursor:pointer;transition:transform 0.1s}
 .btn:active{transform:scale(0.97)}
 .btn-p{background:#2196F3;color:#fff}
@@ -98,16 +107,32 @@ function rIntro(el){
     '<div class="fg"><label>Terapeuta</label><input id="ft" type="text" autocomplete="off"></div>'+
     '<div class="fg"><label>Criança (nome/código)</label><input id="fc" type="text" autocomplete="off"></div>'+
     '<div class="fg"><label>Data de nascimento</label><input id="fd" type="date"></div>'+
-    '<div class="fg"><label>Razão do acompanhamento</label><input id="fr" type="text" placeholder="ex: PDL, atraso de linguagem..." autocomplete="off"></div>'+
+    '<div class="fg"><label>Sexo</label><div class="sex-toggle">'+
+    '<label id="lm" onclick="setSex(\'M\')"><input type="radio" name="sex" value="M">M</label>'+
+    '<label id="lf" onclick="setSex(\'F\')"><input type="radio" name="sex" value="F">F</label></div></div>'+
+    '<div class="fg"><label>Razão do acompanhamento</label><div class="cb-group" id="cbr">'+
+    '<label onclick="togCb(this)"><input type="checkbox" value="PDL">PDL</label>'+
+    '<label onclick="togCb(this)"><input type="checkbox" value="Emergência tardia da linguagem">Emergência tardia</label>'+
+    '<label onclick="togCb(this)"><input type="checkbox" value="Perfil de risco linguístico">Perfil de risco</label>'+
+    '<label onclick="togCb(this)"><input type="checkbox" value="Perfil linguístico frágil">Perfil frágil</label>'+
+    '<label onclick="togCb(this)"><input type="checkbox" value="Perturbação dos sons da fala">Pert. sons da fala</label>'+
+    '<label onclick="togCb(this)"><input type="checkbox" value="Outra">Outra</label>'+
+    '</div></div>'+
     '<div style="height:16px"></div>'+
     '<button class="btn btn-p" onclick="go()">Iniciar 🎙️</button>'+
     '<div style="height:8px"></div>'+
     '<button class="btn btn-o" onclick="go(1)" style="font-size:14px">Sem gravação</button></div>';
 }
 
+let _sex="";
+function setSex(v){_sex=v;document.getElementById("lm").className=v==="M"?"active":"";document.getElementById("lf").className=v==="F"?"active":"";}
+function togCb(el){el.classList.toggle("active");el.querySelector("input").checked=el.classList.contains("active");}
+
 async function go(noR){
+  const cbs=document.querySelectorAll("#cbr input:checked");
+  const reasons=Array.from(cbs).map(c=>c.value).join("; ");
   S.info={th:document.getElementById("ft").value.trim(),ch:document.getElementById("fc").value.trim(),
-    dob:document.getElementById("fd").value,re:document.getElementById("fr").value.trim(),
+    dob:document.getElementById("fd").value,sex:_sex,re:reasons,
     dt:new Date().toISOString().slice(0,10)};
   if(!S.info.ch){alert("Preencha o nome/código da criança");return;}
   if(!noR){
@@ -163,8 +188,8 @@ function fmtXL(){
   const sc=r=>(r&&(r.c==="target"||r.c==="p"))?1:0;
   const nr=r=>r?({p:"p",r:"r",a:"a",omit:"o"}[r.c]||"x"):"";
   const g=p=>(bp[p]||[]);
-  const h="terapeuta\tcrianca\tdn\trazao\tdata\tREG1\tNAS1\tAL1\tIL1\tOL1\tREG2\tNAS2\tAL2\tIL2\tREG3\tOL2\tNAS3\tAL3\tIL3\tOL3\trespnas1\trespnas2\trespnas3";
-  const v=[S.info.th,S.info.ch,S.info.dob,S.info.re,S.info.dt,
+  const h="terapeuta\tcrianca\tdn\tsexo\trazao\tdata\tREG1\tNAS1\tAL1\tIL1\tOL1\tREG2\tNAS2\tAL2\tIL2\tREG3\tOL2\tNAS3\tAL3\tIL3\tOL3\trespnas1\trespnas2\trespnas3";
+  const v=[S.info.th,S.info.ch,S.info.dob,S.info.sex,S.info.re,S.info.dt,
     sc(g("reg")[0]),sc(g("nas")[0]),sc(g("al")[0]),sc(g("il")[0]),sc(g("ol")[0]),
     sc(g("reg")[1]),sc(g("nas")[1]),sc(g("al")[1]),sc(g("il")[1]),
     sc(g("reg")[2]),sc(g("ol")[1]),sc(g("nas")[2]),sc(g("al")[2]),sc(g("il")[2]),sc(g("ol")[2]),
