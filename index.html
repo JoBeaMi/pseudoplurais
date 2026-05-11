@@ -130,9 +130,11 @@ async function go(noR){
   const sexEl=document.querySelector('input[name="sex"]:checked');
   const cbs=document.querySelectorAll("#cbr input[type=checkbox]:checked");
   const reasons=Array.from(cbs).map(c=>c.value).join("; ");
+  const now=new Date();
+  const sessionId=now.toISOString().replace(/[:T]/g,"-").slice(0,19).replace(/-/g,"").slice(2);
   S.info={th:document.getElementById("ft").value.trim(),ch:document.getElementById("fc").value.trim(),
     dob:document.getElementById("fd").value,sex:sexEl?sexEl.value:"",re:reasons,
-    dt:new Date().toISOString().slice(0,10)};
+    dt:now.toISOString().slice(0,10),tm:now.toLocaleTimeString("pt-PT"),sid:sessionId};
   if(!S.info.ch){alert("Preencha o nome/código da criança");return;}
   if(!noR){
     try{
@@ -206,8 +208,8 @@ function fmtXL(){
   const sc=r=>(r&&(r.c==="target"||r.c==="p"))?1:0;
   const nr=r=>r?({p:"p",r:"r",a:"a",omit:"o"}[r.c]||"x"):"";
   const g=p=>(bp[p]||[]);
-  const h="terapeuta\tcrianca\tdn\tsexo\trazao\tdata\tREG1\tNAS1\tAL1\tIL1\tOL1\tREG2\tNAS2\tAL2\tIL2\tREG3\tOL2\tNAS3\tAL3\tIL3\tOL3\trespnas1\trespnas2\trespnas3";
-  const v=[S.info.th,S.info.ch,S.info.dob,S.info.sex,S.info.re,S.info.dt,
+  const h="id_audio\tterapeuta\tcrianca\tdn\tsexo\trazao\tdata\thora\tREG1\tNAS1\tAL1\tIL1\tOL1\tREG2\tNAS2\tAL2\tIL2\tREG3\tOL2\tNAS3\tAL3\tIL3\tOL3\trespnas1\trespnas2\trespnas3";
+  const v=[S.info.sid,S.info.th,S.info.ch,S.info.dob,S.info.sex,S.info.re,S.info.dt,S.info.tm,
     sc(g("reg")[0]),sc(g("nas")[0]),sc(g("al")[0]),sc(g("il")[0]),sc(g("ol")[0]),
     sc(g("reg")[1]),sc(g("nas")[1]),sc(g("al")[1]),sc(g("il")[1]),
     sc(g("reg")[2]),sc(g("ol")[1]),sc(g("nas")[2]),sc(g("al")[2]),sc(g("il")[2]),sc(g("ol")[2]),
@@ -227,8 +229,11 @@ function rDone(el){
     return'<div class="sg"><div class="sgh" style="background:'+p.bg+';color:'+p.bd+'">'+p.lb+'</div>'+rows+'</div>';
   }).join("");
   const d=fmtXL();
+  const ther=(S.info.th||"x").replace(/\s/g,"").slice(0,8);
+  const audioName="plural_"+ther+"_"+(S.info.ch||"x").replace(/\s/g,"_")+"_"+S.info.sid+".webm";
   el.innerHTML='<div class="screen done"><div class="dh"><div style="font-size:40px">✅</div><h2>Concluído</h2>'+
-    '<p class="sc">'+S.info.ch+' · '+tt+'/15 respostas alvo</p></div>'+gs+
+    '<p class="sc">'+S.info.ch+' · '+tt+'/15 respostas alvo</p>'+
+    '<p style="font-size:11px;color:#aaa;margin-top:6px;font-family:monospace">ID áudio: '+audioName+'</p></div>'+gs+
     '<div class="da"><button class="btn btn-g" onclick="copyD()">📋 Copiar</button>'+
     '<button class="btn btn-o" onclick="saveA()">🎙️ Áudio</button></div>'+
     '<div class="da"><button class="btn btn-p" onclick="reset()">↻ Nova criança</button></div>'+
@@ -244,7 +249,9 @@ function copyD(){
 function saveA(){
   if(!S.chunks.length){sMsg("Sem gravação","er");return;}
   const b=new Blob(S.chunks,{type:"audio/webm"}),u=URL.createObjectURL(b),a=document.createElement("a");
-  a.href=u;a.download="plural_"+(S.info.ch||"x").replace(/\s/g,"_")+"_"+S.info.dt+".webm";
+  const ther=(S.info.th||"x").replace(/\s/g,"").slice(0,8);
+  const ch=(S.info.ch||"x").replace(/\s/g,"_");
+  a.href=u;a.download="plural_"+ther+"_"+ch+"_"+S.info.sid+".webm";
   a.click();URL.revokeObjectURL(u);sMsg("Guardado!","ok");
 }
 
