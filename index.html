@@ -13,14 +13,12 @@ body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1
 .intro .sub{font-size:14px;color:#888;margin-bottom:24px}
 .fg{width:100%;max-width:360px;margin-bottom:12px}
 .fg label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:3px}
-.fg input{width:100%;padding:11px;font-size:16px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;-webkit-appearance:none}
-.fg input:focus{outline:none;border-color:#2196F3}
-#cbr input[type=checkbox]{width:20px;height:20px;accent-color:#2196F3;vertical-align:middle;margin-right:6px;cursor:pointer}
-#cbr label{font-size:15px;color:#333;cursor:pointer;vertical-align:middle}
-#cbr>div{padding:10px 0;border-bottom:1px solid #f0f0f0}
-#cbr>div:last-child{border-bottom:none}
-input[type=radio]{width:20px;height:20px;accent-color:#2196F3;vertical-align:middle;margin-right:6px;cursor:pointer}
-.sex-label{font-size:16px;color:#333;cursor:pointer;vertical-align:middle;margin-right:24px}
+.fg input[type="text"],.fg input[type="date"]{width:100%;padding:11px;font-size:16px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;-webkit-appearance:none}
+.fg input[type="text"]:focus,.fg input[type="date"]:focus{outline:none;border-color:#2196F3}
+.check-row{display:flex !important;align-items:center !important;padding:10px 0 !important;border-bottom:1px solid #eee !important;margin:0 !important}
+.check-row:last-child{border-bottom:none !important}
+.check-row input[type="checkbox"],.check-row input[type="radio"]{width:22px !important;height:22px !important;margin:0 10px 0 0 !important;flex-shrink:0;accent-color:#2196F3;display:inline-block !important}
+.check-row label{font-size:16px !important;color:#333 !important;cursor:pointer !important;flex:1 !important;font-weight:400 !important;margin:0 !important;display:inline !important}
 .btn{width:100%;max-width:360px;padding:15px;font-size:17px;font-weight:600;border:none;border-radius:12px;cursor:pointer;transition:transform 0.1s}
 .btn:active{transform:scale(0.97)}
 .btn-p{background:#2196F3;color:#fff}
@@ -106,16 +104,17 @@ function rIntro(el){
     '<div class="fg"><label>Terapeuta</label><input id="ft" type="text" autocomplete="off"></div>'+
     '<div class="fg"><label>Criança (nome/código)</label><input id="fc" type="text" autocomplete="off"></div>'+
     '<div class="fg"><label>Data de nascimento</label><input id="fd" type="date"></div>'+
-    '<div class="fg"><label>Sexo</label><div style="margin-top:8px">'+
-    '<input type="radio" name="sex" id="sm" value="M"><label for="sm" class="sex-label">Masculino</label>'+
-    '<input type="radio" name="sex" id="sf" value="F"><label for="sf" class="sex-label">Feminino</label></div></div>'+
-    '<div class="fg"><label>Razão do acompanhamento</label><div id="cbr" style="margin-top:4px">'+
-    '<div style="margin-bottom:6px"><input type="checkbox" id="cb1" value="PDL"> <label for="cb1" style="font-size:15px">PDL</label></div>'+
-    '<div style="margin-bottom:6px"><input type="checkbox" id="cb2" value="Emergência tardia da linguagem"> <label for="cb2" style="font-size:15px">Emergência tardia da linguagem</label></div>'+
-    '<div style="margin-bottom:6px"><input type="checkbox" id="cb3" value="Perfil de risco linguístico"> <label for="cb3" style="font-size:15px">Perfil de risco linguístico</label></div>'+
-    '<div style="margin-bottom:6px"><input type="checkbox" id="cb4" value="Perfil linguístico frágil"> <label for="cb4" style="font-size:15px">Perfil linguístico frágil</label></div>'+
-    '<div style="margin-bottom:6px"><input type="checkbox" id="cb5" value="Perturbação dos sons da fala"> <label for="cb5" style="font-size:15px">Perturbação dos sons da fala</label></div>'+
-    '<div style="margin-bottom:6px"><input type="checkbox" id="cb6" value="Outra"> <label for="cb6" style="font-size:15px">Outra</label></div>'+
+    '<div class="fg"><label>Sexo</label>'+
+      '<div class="check-row"><input type="radio" name="sex" id="sm" value="M"><label for="sm">Masculino</label></div>'+
+      '<div class="check-row"><input type="radio" name="sex" id="sf" value="F"><label for="sf">Feminino</label></div>'+
+    '</div>'+
+    '<div class="fg"><label>Razão do acompanhamento</label><div id="cbr">'+
+      '<div class="check-row"><input type="checkbox" id="cb1" value="PDL"><label for="cb1">PDL</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb2" value="Emergência tardia da linguagem"><label for="cb2">Emergência tardia da linguagem</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb3" value="Perfil de risco linguístico"><label for="cb3">Perfil de risco linguístico</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb4" value="Perfil linguístico frágil"><label for="cb4">Perfil linguístico frágil</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb5" value="Perturbação dos sons da fala"><label for="cb5">Perturbação dos sons da fala</label></div>'+
+      '<div class="check-row"><input type="checkbox" id="cb6" value="Outra"><label for="cb6">Outra</label></div>'+
     '</div></div>'+
     '<div style="height:16px"></div>'+
     '<button class="btn btn-p" onclick="go()">Iniciar 🎙️</button>'+
