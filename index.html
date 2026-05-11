@@ -194,8 +194,18 @@ function ans(oi){
   S.resp.push({id:it.id,n:it.n,p:it.p,c:o.c,l:o.l});
   if(S.idx<ITEMS.length-1){S.idx++;render();}
   else{
-    if(S.rec&&S.rec.state==="recording"){S.rec.stop();S.rec.stream.getTracks().forEach(t=>t.stop());}
-    S.recording=false;S.ph="done";render();autoSend();
+    if(S.rec&&S.rec.state==="recording"){
+      // Wait for recorder to finish before sending
+      S.rec.onstop=()=>{
+        S.rec.stream.getTracks().forEach(t=>t.stop());
+        S.recording=false;
+        S.ph="done";render();
+        autoSend();
+      };
+      S.rec.stop();
+    } else {
+      S.recording=false;S.ph="done";render();autoSend();
+    }
   }
 }
 
