@@ -268,30 +268,51 @@ function saveA(){
 
 async function autoSend(){
   if(!SHEETS_URL){sMsg("Sheets não configurado","wt");return;}
-  sMsg("A enviar dados e áudio...","wt");
+  
   const d=fmtXL(),vals=d.v.split("\t"),keys=d.h.split("\t"),payload={};
   keys.forEach((k,i)=>payload[k]=vals[i]||"");
   
-  if(S.chunks.length){
-    try{
-      const blob=new Blob(S.chunks,{type:"audio/webm"});
-      const b64=await new Promise((res,rej)=>{
-        const r=new FileReader();
-        r.onload=()=>res(r.result.split(",")[1]);
-        r.onerror=rej;
-        r.readAsDataURL(blob);
-      });
-      const ther=(S.info.th||"x").replace(/\s/g,"").slice(0,8);
-      const ch=(S.info.ch||"x").replace(/\s/g,"_");
-      payload.audio_b64=b64;
-      payload.audio_filename="plural_"+ther+"_"+ch+"_"+S.info.sid+".webm";
-    }catch(e){console.error("Audio encode failed:",e);}
-  }
-  
+  // STEP 1: Send data first (small, fast, almost always works)
+  sMsg("A enviar dados...","wt");
+  let dataOk=false;
   try{
     await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
-    sMsg("✓ Enviado!","ok");
-  }catch(e){sMsg("Erro no envio. Use o botão Áudio para guardar manualmente.","er");}
+    dataOk=true;
+  }catch(e){
+    sMsg("Erro ao enviar dados. Use o botão Copiar para guardar manualmente.","er");
+    return;
+  }
+  
+  // STEP 2: Send audio separately (if exists)
+  if(!S.chunks.length){
+    sMsg("✓ Dados enviados (sem áudio)","ok");
+    return;
+  }
+  
+  sMsg("✓ Dados enviados. A enviar áudio...","wt");
+  
+  try{
+    const blob=new Blob(S.chunks,{type:"audio/webm"});
+    const b64=await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=()=>res(r.result.split(",")[1]);
+      r.onerror=rej;
+      r.readAsDataURL(blob);
+    });
+    const ther=(S.info.th||"x").replace(/\s/g,"").slice(0,8);
+    const ch=(S.info.ch||"x").replace(/\s/g,"_");
+    const audioPayload={
+      id_audio:S.info.sid,
+      audio_only:true,
+      audio_b64:b64,
+      audio_filename:"plural_"+ther+"_"+ch+"_"+S.info.sid+".webm"
+    };
+    
+    await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(audioPayload)});
+    sMsg("✓ Tudo enviado!","ok");
+  }catch(e){
+    sMsg("Dados OK, mas áudio falhou. Use o botão Áudio para guardar manualmente.","er");
+  }
 }
 
 function sMsg(m,t){const a=document.getElementById("stA");if(a)a.innerHTML='<div class="sm sm-'+t+'">'+m+'</div>';}
