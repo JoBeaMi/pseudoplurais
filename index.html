@@ -262,7 +262,6 @@ async function autoSend(){
   const d=fmtXL(),vals=d.v.split("\t"),keys=d.h.split("\t"),payload={};
   keys.forEach((k,i)=>payload[k]=vals[i]||"");
   
-  // Add audio as base64
   if(S.chunks.length){
     try{
       const blob=new Blob(S.chunks,{type:"audio/webm"});
@@ -280,7 +279,7 @@ async function autoSend(){
   }
   
   try{
-    await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
+    await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
     sMsg("✓ Enviado!","ok");
   }catch(e){sMsg("Erro no envio. Use o botão Áudio para guardar manualmente.","er");}
 }
