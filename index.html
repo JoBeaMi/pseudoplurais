@@ -94,6 +94,7 @@ let S={ph:"intro",idx:0,resp:[],info:{},rec:null,chunks:[],recording:false,undo:
 function render(){
   const a=document.getElementById("app");
   if(S.ph==="intro")rIntro(a);
+  else if(S.ph==="example")rExample(a);
   else if(S.ph==="test")rTest(a);
   else rDone(a);
 }
@@ -141,8 +142,25 @@ async function go(noR){
       S.rec.start();S.recording=true;
     }catch(e){if(!confirm("Sem microfone. Continuar?"))return;}
   }
-  S.ph="test";S.idx=0;S.resp=[];S.undo=[];render();
+  S.ph="example";render();
 }
+
+function rExample(el){
+  el.innerHTML='<div class="screen">'+
+    (S.recording?'<div class="hdr"><span></span><div class="ri"><div class="rd"></div>REC</div></div>':'')+
+    '<div class="tc">'+
+      '<div style="font-size:12px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Exemplo · Instrução</div>'+
+      '<p style="font-size:16px;color:#333;text-align:center;max-width:340px;line-height:1.5;margin-bottom:6px">"Vou dizer-te umas palavras muito engraçadas que inventei!"</p>'+
+      '<p style="font-size:14px;color:#666;text-align:center;max-width:340px;line-height:1.5;margin-bottom:14px">"Deves terminar a minha frase da maneira que consideras correta."</p>'+
+      (IMG["3"]?'<img src="data:image/jpeg;base64,'+IMG["3"]+'" style="width:100%;max-width:340px;border-radius:8px;margin-bottom:8px">':'')+
+      '<p style="font-size:15px;color:#333;text-align:center;max-width:340px;line-height:1.5">"Aqui está um <b>lifo</b>... e aqui dois <b>lifos</b>."</p>'+
+      '<p style="font-size:14px;color:#666;text-align:center;max-width:340px;margin-top:14px">Agora vamos a sério!</p>'+
+      '<div style="height:16px"></div>'+
+      '<button class="btn btn-p" onclick="startTest()" style="max-width:300px">Começar →</button>'+
+    '</div></div>';
+}
+
+function startTest(){S.ph="test";S.idx=0;S.resp=[];S.undo=[];render();}
 
 function rTest(el){
   const it=ITEMS[S.idx],p=PC[it.p],pr=(S.idx/ITEMS.length)*100;
@@ -161,7 +179,7 @@ function rTest(el){
       '<div class="badge" style="background:'+p.bg+';color:'+p.bd+'">'+p.lb+'</div>'+
       '<div class="pname">'+it.n+'</div>'+
       (IMG[it.s]?'<img src="data:image/jpeg;base64,'+IMG[it.s]+'" style="width:100%;max-width:300px;border-radius:8px;margin:6px 0;opacity:0.85">':'')+
-      '<p class="prompt">"...e nesta temos dois...?"</p>'+
+      '<p class="prompt">"Aqui está um <b>'+it.n.toLowerCase()+'</b>... e aqui dois...?"</p>'+
       '<div class="opts">'+btns+'</div>'+
       '<p style="font-size:11px;color:#aaa;margin-top:10px;text-align:center;max-width:320px">Pseudo mal repetida mas terminação certa? Marque o plural que disse.</p>'+
     '</div></div>';
