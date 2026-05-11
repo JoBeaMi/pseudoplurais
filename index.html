@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pseudoplurais</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#f8f9fa;color:#1a1a1a;-webkit-tap-highlight-color:transparent}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.intro{align-items:center;justify-content:center;padding:24px}
+.intro h1{font-size:24px;font-weight:800;margin-bottom:4px}
+.intro .sub{font-size:14px;color:#888;margin-bottom:24px}
+.fg{width:100%;max-width:360px;margin-bottom:12px}
+.fg label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:3px}
+.fg input{width:100%;padding:11px;font-size:16px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;-webkit-appearance:none}
+.fg input:focus{outline:none;border-color:#2196F3}
+.btn{width:100%;max-width:360px;padding:15px;font-size:17px;font-weight:600;border:none;border-radius:12px;cursor:pointer;transition:transform 0.1s}
+.btn:active{transform:scale(0.97)}
+.btn-p{background:#2196F3;color:#fff}
+.btn-g{background:#4CAF50;color:#fff}
+.btn-o{background:#f5f5f5;color:#666;border:1px solid #ddd}
+.btn-s{padding:8px 14px;font-size:13px;width:auto;max-width:none}
+.btn[disabled]{opacity:0.35}
+.pbar{height:4px;background:#e0e0e0}
+.pfill{height:100%;transition:width 0.3s,background 0.3s}
+.hdr{padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.tc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 24px}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.pname{font-size:44px;font-weight:800;margin-bottom:6px}
+.prompt{font-size:15px;color:#888;margin-bottom:28px}
+.opts{width:100%;max-width:340px;display:flex;flex-direction:column;gap:8px}
+.ob{width:100%;padding:14px 20px;font-size:18px;font-weight:500;border:2px solid #e0e0e0;border-radius:12px;background:#fff;cursor:pointer;text-align:center;transition:transform 0.1s}
+.ob:active{transform:scale(0.97)}
+.ob.tg{font-weight:700}
+.ob.om{background:#FFF3E0;border-color:#FFB74D;color:#E65100;font-size:14px;padding:12px}
+.ob.ot{background:#fafafa;border-color:#e0e0e0;color:#888;font-size:14px;padding:12px}
+.ri{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:#FFEBEE;font-size:11px;color:#D32F2F;font-weight:600}
+.rd{width:7px;height:7px;border-radius:50%;background:#D32F2F;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.done{padding:20px}
+.dh{text-align:center;margin-bottom:18px}
+.dh h2{font-size:20px;font-weight:700}
+.dh .sc{font-size:14px;color:#666;margin-top:4px}
+.sg{margin-bottom:8px;border-radius:10px;border:1px solid #e8e8e8;overflow:hidden}
+.sgh{padding:6px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.si{padding:6px 12px;display:flex;justify-content:space-between;align-items:center;font-size:14px;border-top:1px solid #f0f0f0}
+.rt{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:500}
+.rt-t{background:#E8F5E9;color:#2E7D32}
+.rt-o{background:#FFF3E0;color:#E65100}
+.rt-x{background:#ECEFF1;color:#546E7A}
+.da{display:flex;gap:8px;margin-top:14px}
+.da .btn{flex:1;font-size:14px}
+.dp{margin-top:10px;padding:8px;background:#f0f0f0;border-radius:8px;font-size:10px;color:#888;font-family:monospace;white-space:pre-wrap;word-break:break-all}
+.sm{text-align:center;margin-top:8px;font-size:13px;padding:6px;border-radius:8px}
+.sm-ok{background:#E8F5E9;color:#2E7D32}
+.sm-er{background:#FFEBEE;color:#C62828}
+.sm-wt{background:#FFF3E0;color:#E65100}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const ITEMS=[
+{id:1,n:"Nafu",p:"reg",o:[{l:"Nafus",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:2,n:"Kivão",p:"nas",o:[{l:"Kivões",c:"p",k:"tg"},{l:"Kivãos",c:"r",k:""},{l:"Kivães",c:"a",k:""},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:3,n:"Bidal",p:"al",o:[{l:"Bidais",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:4,n:"Fibil",p:"il",o:[{l:"Fibis",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:5,n:"Dapol",p:"ol",o:[{l:"Dapóis",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:6,n:"Guebu",p:"reg",o:[{l:"Guebus",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:7,n:"Duvão",p:"nas",o:[{l:"Duvões",c:"p",k:"tg"},{l:"Duvãos",c:"r",k:""},{l:"Duvães",c:"a",k:""},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:8,n:"Zubal",p:"al",o:[{l:"Zubais",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:9,n:"Pukil",p:"il",o:[{l:"Pukis",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:10,n:"Zomu",p:"reg",o:[{l:"Zomus",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:11,n:"Nitol",p:"ol",o:[{l:"Nitóis",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:12,n:"Tatão",p:"nas",o:[{l:"Tatões",c:"p",k:"tg"},{l:"Tatãos",c:"r",k:""},{l:"Tatães",c:"a",k:""},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:13,n:"Satal",p:"al",o:[{l:"Satais",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:14,n:"Zafil",p:"il",o:[{l:"Zafis",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]},
+{id:15,n:"Kutol",p:"ol",o:[{l:"Kutóis",c:"target",k:"tg"},{l:"Omitiu",c:"omit",k:"om"},{l:"Outra",c:"other",k:"ot"}]}
+];
+
+const PC={reg:{bg:"#E8F5E9",bd:"#4CAF50",lb:"Regular"},nas:{bg:"#E3F2FD",bd:"#2196F3",lb:"Nasal"},al:{bg:"#FFF3E0",bd:"#FF9800",lb:"Lateral -al"},il:{bg:"#FCE4EC",bd:"#E91E63",lb:"Lateral -il"},ol:{bg:"#FFF8E1",bd:"#FFC107",lb:"Lateral -ol"}};
+const PO={reg:0,nas:1,al:2,il:3,ol:4};
+const SHEETS_URL="";
+
+let S={ph:"intro",idx:0,resp:[],info:{},rec:null,chunks:[],recording:false,undo:[]};
+
+function render(){
+  const a=document.getElementById("app");
+  if(S.ph==="intro")rIntro(a);
+  else if(S.ph==="test")rTest(a);
+  else rDone(a);
+}
+
+function rIntro(el){
+  el.innerHTML='<div class="screen intro">'+
+    '<div style="font-size:48px;margin-bottom:12px">🧩</div><h1>Pseudoplurais</h1><p class="sub">15 itens · gravação áudio</p>'+
+    '<div class="fg"><label>Terapeuta</label><input id="ft" type="text" autocomplete="off"></div>'+
+    '<div class="fg"><label>Criança (nome/código)</label><input id="fc" type="text" autocomplete="off"></div>'+
+    '<div class="fg"><label>Data de nascimento</label><input id="fd" type="date"></div>'+
+    '<div class="fg"><label>Razão do acompanhamento</label><input id="fr" type="text" placeholder="ex: PDL, atraso de linguagem..." autocomplete="off"></div>'+
+    '<div style="height:16px"></div>'+
+    '<button class="btn btn-p" onclick="go()">Iniciar 🎙️</button>'+
+    '<div style="height:8px"></div>'+
+    '<button class="btn btn-o" onclick="go(1)" style="font-size:14px">Sem gravação</button></div>';
+}
+
+async function go(noR){
+  S.info={th:document.getElementById("ft").value.trim(),ch:document.getElementById("fc").value.trim(),
+    dob:document.getElementById("fd").value,re:document.getElementById("fr").value.trim(),
+    dt:new Date().toISOString().slice(0,10)};
+  if(!S.info.ch){alert("Preencha o nome/código da criança");return;}
+  if(!noR){
+    try{
+      const st=await navigator.mediaDevices.getUserMedia({audio:true});
+      S.rec=new MediaRecorder(st);S.chunks=[];
+      S.rec.ondataavailable=e=>{if(e.data.size>0)S.chunks.push(e.data);};
+      S.rec.start();S.recording=true;
+    }catch(e){if(!confirm("Sem microfone. Continuar?"))return;}
+  }
+  S.ph="test";S.idx=0;S.resp=[];S.undo=[];render();
+}
+
+function rTest(el){
+  const it=ITEMS[S.idx],p=PC[it.p],pr=(S.idx/ITEMS.length)*100;
+  let btns=it.o.map((o,i)=>
+    '<button class="ob '+o.k+'" style="'+(o.k==="tg"?"border-color:"+p.bd+";color:"+p.bd+";background:"+p.bg:"")+
+    '" onclick="ans('+i+')">'+o.l+'</button>').join("");
+
+  el.innerHTML='<div class="screen">'+
+    '<div class="pbar"><div class="pfill" style="width:'+pr+'%;background:'+p.bd+'"></div></div>'+
+    '<div class="hdr">'+
+      '<button class="btn-s btn-o" onclick="undo()" '+(S.undo.length===0?"disabled":"")+'>← Voltar</button>'+
+      (S.recording?'<div class="ri"><div class="rd"></div>REC</div>':'')+
+      '<span style="font-size:13px;color:#888">'+(S.idx+1)+'/'+ITEMS.length+'</span>'+
+    '</div>'+
+    '<div class="tc">'+
+      '<div class="badge" style="background:'+p.bg+';color:'+p.bd+'">'+p.lb+'</div>'+
+      '<div class="pname">'+it.n+'</div>'+
+      '<p class="prompt">"...e nesta temos dois...?"</p>'+
+      '<div class="opts">'+btns+'</div>'+
+    '</div></div>';
+}
+
+function ans(oi){
+  const it=ITEMS[S.idx],o=it.o[oi];
+  S.undo.push({idx:S.idx,resp:[...S.resp]});
+  S.resp.push({id:it.id,n:it.n,p:it.p,c:o.c,l:o.l});
+  if(S.idx<ITEMS.length-1){S.idx++;render();}
+  else{
+    if(S.rec&&S.rec.state==="recording"){S.rec.stop();S.rec.stream.getTracks().forEach(t=>t.stop());}
+    S.recording=false;S.ph="done";render();autoSend();
+  }
+}
+
+function undo(){
+  if(!S.undo.length)return;
+  const l=S.undo.pop();S.idx=l.idx;S.resp=l.resp;render();
+}
+
+function fmtXL(){
+  const bp={};S.resp.forEach(r=>{if(!bp[r.p])bp[r.p]=[];bp[r.p].push(r);});
+  const sc=r=>(r&&(r.c==="target"||r.c==="p"))?1:0;
+  const nr=r=>r?({p:"p",r:"r",a:"a",omit:"o"}[r.c]||"x"):"";
+  const g=p=>(bp[p]||[]);
+  const h="terapeuta\tcrianca\tdn\trazao\tdata\tREG1\tNAS1\tAL1\tIL1\tOL1\tREG2\tNAS2\tAL2\tIL2\tREG3\tOL2\tNAS3\tAL3\tIL3\tOL3\trespnas1\trespnas2\trespnas3";
+  const v=[S.info.th,S.info.ch,S.info.dob,S.info.re,S.info.dt,
+    sc(g("reg")[0]),sc(g("nas")[0]),sc(g("al")[0]),sc(g("il")[0]),sc(g("ol")[0]),
+    sc(g("reg")[1]),sc(g("nas")[1]),sc(g("al")[1]),sc(g("il")[1]),
+    sc(g("reg")[2]),sc(g("ol")[1]),sc(g("nas")[2]),sc(g("al")[2]),sc(g("il")[2]),sc(g("ol")[2]),
+    nr(g("nas")[0]),nr(g("nas")[1]),nr(g("nas")[2])].join("\t");
+  return{h,v};
+}
+
+function rDone(el){
+  const gp={};S.resp.forEach(r=>{if(!gp[r.p])gp[r.p]=[];gp[r.p].push(r);});
+  const tt=S.resp.filter(r=>r.c==="target"||r.c==="p").length;
+  let gs=Object.entries(gp).sort((a,b)=>PO[a[0]]-PO[b[0]]).map(([pt,its])=>{
+    const p=PC[pt];
+    let rows=its.map(it=>{
+      const cls=(it.c==="target"||it.c==="p")?"rt-t":it.c==="omit"?"rt-o":"rt-x";
+      return'<div class="si"><span style="font-weight:500">'+it.n+'</span><span class="rt '+cls+'">'+it.l+'</span></div>';
+    }).join("");
+    return'<div class="sg"><div class="sgh" style="background:'+p.bg+';color:'+p.bd+'">'+p.lb+'</div>'+rows+'</div>';
+  }).join("");
+  const d=fmtXL();
+  el.innerHTML='<div class="screen done"><div class="dh"><div style="font-size:40px">✅</div><h2>Concluído</h2>'+
+    '<p class="sc">'+S.info.ch+' · '+tt+'/15 respostas alvo</p></div>'+gs+
+    '<div class="da"><button class="btn btn-g" onclick="copyD()">📋 Copiar</button>'+
+    '<button class="btn btn-o" onclick="saveA()">🎙️ Áudio</button></div>'+
+    '<div class="da"><button class="btn btn-p" onclick="reset()">↻ Nova criança</button></div>'+
+    '<div id="stA"></div>'+
+    '<div class="dp">'+d.h+"\n"+d.v+'</div></div>';
+}
+
+function copyD(){
+  const d=fmtXL();
+  navigator.clipboard.writeText(d.h+"\n"+d.v).then(()=>sMsg("Copiado!","ok")).catch(()=>sMsg("Erro","er"));
+}
+
+function saveA(){
+  if(!S.chunks.length){sMsg("Sem gravação","er");return;}
+  const b=new Blob(S.chunks,{type:"audio/webm"}),u=URL.createObjectURL(b),a=document.createElement("a");
+  a.href=u;a.download="plural_"+(S.info.ch||"x").replace(/\s/g,"_")+"_"+S.info.dt+".webm";
+  a.click();URL.revokeObjectURL(u);sMsg("Guardado!","ok");
+}
+
+async function autoSend(){
+  if(!SHEETS_URL){sMsg("Sheets não configurado","wt");return;}
+  sMsg("A enviar...","wt");
+  const d=fmtXL(),vals=d.v.split("\t"),keys=d.h.split("\t"),payload={};
+  keys.forEach((k,i)=>payload[k]=vals[i]||"");
+  try{await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
+    sMsg("✓ Enviado!","ok");
+  }catch(e){sMsg("Erro. Copie manualmente.","er");}
+}
+
+function sMsg(m,t){const a=document.getElementById("stA");if(a)a.innerHTML='<div class="sm sm-'+t+'">'+m+'</div>';}
+function reset(){S={ph:"intro",idx:0,resp:[],info:{},rec:null,chunks:[],recording:false,undo:[]};render();}
+
+render();
+</script>
+</body>
+</html>
